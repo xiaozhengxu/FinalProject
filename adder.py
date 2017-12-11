@@ -2,18 +2,22 @@ from gates import *
 
 class TernaryAdder:
 	def __init__(self):
-		self.triA = []
-		self.triB = []
+
 		self.operandA = [Wire() for i in range(9)]
 		self.operandB = [Wire() for i in range(9)]
-		self.decA = 0
-		self.decB = 0
+		self.connectPointA = [i for i in range(9)] #To be replaced with connectionPoints in AddTernary
+		self.connectPointB = [i for i in range(9)]
 		self.overflows = [Wire() for i in range(9)]
 		self.result = [Wire() for i in range(9)]
 		self.resultRead = [ConnectionPoint(ConnectionPoint.READER) for i in range(9)]
 		self.gates = []
-		self.output = []
+		
+		self.decA = 0
+		self.decB = 0
 		self.decRes = 0
+		self.triA = []
+		self.triB = []
+		self.output = []
 
 	def addTernary(self, Adigits, Bdigits):
 		"""Adigits: 
@@ -36,10 +40,12 @@ class TernaryAdder:
 		self.decB = self.convertToDecimal(Bdigits)
 		#Connecting the wires to the input digits and result wires to the connection points:
 		for i in range(9):
-			aDigit= ConnectionPoint(ConnectionPoint.WRITER, state=Adigits[i])
-			self.operandA[i].Connect(aDigit)
-			bDigit= ConnectionPoint(ConnectionPoint.WRITER, state=Bdigits[i])
-			self.operandB[i].Connect(bDigit)
+			self.connectPointA[i]= ConnectionPoint(ConnectionPoint.WRITER, state=Adigits[i])
+			self.operandA[i].Connect(self.connectPointA[i])
+			self.connectPointB[i]= ConnectionPoint(ConnectionPoint.WRITER, state=Bdigits[i])
+			self.operandB[i].Connect(self.connectPointB[i])
+			self.operandA[i].Update()
+			self.operandB[i].Update()
 			self.result[i].Connect(self.resultRead[i])
 
 		zero = ConnectionPoint(ConnectionPoint.WRITER, state = 0)
@@ -48,21 +54,23 @@ class TernaryAdder:
 
 		#Doing the addition using 9 sum3 gates
 		for k in range(9):
+
 			curGate = GateSum3()
 			curGate.SetInputWire1(self.operandA[8-k])
 			curGate.SetInputWire2(self.operandB[8-k])
+			self.operandA[8-k].Update()
+			self.operandB[8-k].Update()
 			if k == 0:
 				curGate.SetInputWire3(zeroWire)
+				zeroWire.Update()
 			else:
 				curGate.SetInputWire3(self.overflows[k-1])
+				self.overflows[k-1].Update()
 			curGate.SetOutputWire(self.result[8-k])
-
-			print (curGate.ReadOutput())
-			
+			self.result[8-k].Update() #Update the result wire: writes to resultRead
 			curGate.SetOverflowWire(self.overflows[k])
 			self.gates.append(curGate)
-		for j in range(9):
-			self.result[j].Update() #Update the wire, writing to the connection point
+			
 		self.output = [cp.GetState() for cp in self.resultRead]
 		self.decRes = self.convertToDecimal(self.output)
 
@@ -96,7 +104,7 @@ class TernaryAdder:
 
 if __name__ == '__main__':
 	myadder = TernaryAdder()
-	myadder.addTernary([1,0,0,-1],[1,0,0,-1])
+	myadder.addTernary([1,0,-1,1,0,0,-1],[0,1,0,1,0,0,-1])
 	myadder.printResult()
 
 

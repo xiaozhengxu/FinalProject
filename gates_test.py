@@ -250,6 +250,58 @@ class TestDiadicGates(unittest.TestCase):
       self.assertEqual(out, result, '%s expected %s' %  (gate, STATE_NAME[out]))
 
 
+class TestTriadicGates(unittest.TestCase):
+  def setupTriadicGate(self, gate_type):
+    writer_1 = ConnectionPoint(ConnectionPoint.WRITER)
+    wire_1 = Wire()
+    writer_2 = ConnectionPoint(ConnectionPoint.WRITER)
+    wire_2 = Wire()
+    writer_3 = ConnectionPoint(ConnectionPoint.WRITER)
+    wire_3 = Wire()
+    gate = gate_type()
+    wire_4 = Wire()
+    reader1 = ConnectionPoint(ConnectionPoint.READER)
+    wire_5 = Wire()
+    reader2 = ConnectionPoint(ConnectionPoint.READER)
+
+    wire_1.Connect(writer_1)
+    wire_2.Connect(writer_2)
+    wire_3.Connect(writer_3)
+    gate.SetInputWire1(wire_1)
+    gate.SetInputWire2(wire_2)
+    gate.SetInputWire3(wire_3)
+
+    wire_4.Connect(reader1) #overflow
+    wire_5.Connect(reader2) #output(sum)
+    gate.SetOverflowWire(wire_4)
+    gate.SetOutputWire(wire_5)
+
+    return (writer_1, writer_2, writer_3, reader1, reader2, gate)
+
+  def genericTriadicTest(self, gate_type, ins_outs):
+    (i1, i2, i3, o1, o2, g) = self.setupTriadicGate(gate_type)
+    for (in1, in2, in3) in ins_outs:
+      expected = ins_outs[(in1, in2, in3)]
+      i1.SetStateWrite(in1)
+      i2.SetStateWrite(in2)
+      i3.SetStateWrite(in3)
+
+      result = (o1.GetState(), o2.GetState())
+      print(in1,in2,in3, o1.GetState(), o2.GetState())
+      self.assertEqual(expected, result, '%s expected output [%s, %s]' % \
+        (g, STATE_NAME[o1.GetState()], STATE_NAME[o2.GetState()]))
+
+  def testGateSum3(self):
+    self.genericTriadicTest(GateSum3, {
+      (PLUS, PLUS, PLUS): (PLUS, NEUTRAL),
+      (PLUS, PLUS, NEUTRAL): (PLUS, MINUS),
+      (PLUS, PLUS, MINUS): (NEUTRAL, PLUS),
+      (NEUTRAL, NEUTRAL, NEUTRAL): (NEUTRAL, NEUTRAL),
+      (NEUTRAL, MINUS, MINUS): (MINUS, PLUS),
+      (MINUS, PLUS, MINUS): (NEUTRAL, MINUS),
+      (MINUS, MINUS, MINUS): (MINUS, NEUTRAL) # add more later on to test if order matters
+      })
+
 class TestTryte(unittest.TestCase):
   def setupTryte(self):
     tryte = Tryte()
