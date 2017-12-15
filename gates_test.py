@@ -1,4 +1,5 @@
 from gates import *
+from gates_triadic import *
 import unittest
 
 class TestConnections(unittest.TestCase):
