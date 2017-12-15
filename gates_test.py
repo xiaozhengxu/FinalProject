@@ -287,7 +287,7 @@ class TestTriadicGates(unittest.TestCase):
       i3.SetStateWrite(in3)
 
       result = (o1.GetState(), o2.GetState())
-      print(in1,in2,in3, o1.GetState(), o2.GetState())
+      # print(in1,in2,in3, o1.GetState(), o2.GetState())
       self.assertEqual(expected, result, '%s expected output [%s, %s]' % \
         (g, STATE_NAME[o1.GetState()], STATE_NAME[o2.GetState()]))
 

@@ -1,4 +1,6 @@
 from gates import *
+from gates_triadic import *
+import math
 
 class TernaryAdder:
 	def __init__(self):
@@ -69,18 +71,24 @@ class TernaryAdder:
 			curGate.SetOutputWire(self.result[8-k])
 			self.result[8-k].Update() #Update the result wire: writes to resultRead
 			curGate.SetOverflowWire(self.overflows[k])
-			self.gates.append(curGate)
+			# self.gates.append(curGate)
 			
 		self.output = [cp.GetState() for cp in self.resultRead]
 		self.decRes = self.convertToDecimal(self.output)
 
+		self.reset()
+
+	def reset(self):
+		for k in range(9):
+			self.operandA[k].DisconnectAll()
+			self.operandB[k].DisconnectAll()
+			self.result[k].DisconnectAll()
+			self.overflows[k].DisconnectAll()
+
 	def printResult(self):
-		print (self.triA)
-		print (self.triB)
-		print (self.output)
-		print (self.decA)
-		print (self.decB)
-		print (self.decRes)
+		print (self.triA, self.decA)
+		print (self.triB, self.decB)
+		print (self.output, self.decRes)
 
 	def convertToDecimal(self, digits):
 		"""
@@ -97,14 +105,40 @@ class TernaryAdder:
 		return result
 
 	def addDecimal(self, a, b):
-		addTernary(convertToTernary(a), convertToTernary(b))
+		self.addTernary(self.convertToTernary(a), self.convertToTernary(b))
 
-	def convertToTernary(self):
-		pass
+	def convertToTernary(self, number):
+		res = [0,0,0, 0,0,0, 0,0,0]
+		if number == 0:
+			return res
+		while number != 0:
+			if number< 0:
+				sign = -1
+				number = -1* number
+			else:
+				sign = 1
+			top = math.ceil(math.log(number, 3))
+			if number > 3.0**top/2.0:
+				res[8-top] = sign
+				number = (number - 3**top)*sign 
+			else:
+				res[8-top+1] = sign 
+				number = (number - 3**(top-1))*sign
+		return res
 
 if __name__ == '__main__':
 	myadder = TernaryAdder()
-	myadder.addTernary([1,0,-1,1,0,0,-1],[0,1,0,1,0,0,-1])
+	myadder.addTernary([1,0,-1,1,0,0,-1],\
+					   [0,1,0,1,0,0,-1])
 	myadder.printResult()
+	myadder.addDecimal(-333,733)
+	myadder.printResult()
+
+	# print(5, myadder.convertToTernary(5))
+	# print(26, myadder.convertToTernary(26))
+	# print(0, myadder.convertToTernary(0))
+	# print(-9, myadder.convertToTernary(-9))
+	# print(676, myadder.convertToTernary(676))
+	# print(-28, myadder.convertToTernary(-28))
 
 
