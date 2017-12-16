@@ -11,8 +11,8 @@ This notation system makes it easy to add 2 numbers, as 1 + 1 = + -, (-1) + (-1)
 The basic gates implemented in the code are referenced off this webpage: [Douglas Jones on Ternary Gates](http://homepage.divms.uiowa.edu/~jones/ternary/logic.shtml). The single input gates are Identity (output = input), Negation (output = ~Input), Increment (output = Input + 1), and Decoders (ouput = (input = a)). For two input gates, the binary And gate becomes a Min gate in ternary, and the binary Or gate becomes a Max gate. Most ternary logic gates can be built from a combination of the single input gates, And gate, and Or gate.    
 
 ### Component Implementation in python: Adder
-The implementation of the adder is very similar to Lab1 in class where we implemented an alu in verilog. Instead of using XOR to sum two bits in binary, in ternary a sum function is used (also defined in the Douglas W. Jones on gates link above). For the carryout, a consensus function is used. Because this is implemented in python, there is also two functions that convert decimal to ternary and vice versa. The code is in adder.py
-![Screenshot of Adder adding numbers in Ternary] (https://github.com/xiaozhengxu/TernaryCompArch/blob/master/Adder%20screenshot.png)
+The implementation of the adder is very similar to Lab1 in class where we implemented an alu in verilog. Instead of using XOR to sum two bits in binary, in ternary a sum function is used (also defined in the Douglas W. Jones on gates link above). For the carryout, a consensus function is used. Because this is implemented in python, there is also two functions that convert decimal to ternary and vice versa. The code is in adder.py.
+![Screenshot of Adder adding numbers in Ternary](https://github.com/xiaozhengxu/TernaryCompArch/blob/master/Adder%20screenshot.png)
 
 ### Component Implementation in python: Mux
 A 3 to 1 mux is also implemented in a similar way to a binary mux. A decoder, three And gates and a Or gate are used to construct the mux. It is written and tested in ternaryMux.py and mux_test.py. 
@@ -26,4 +26,4 @@ A binary SR latch does not translate directly to ternary. Three values per wire 
 3. Build a ternary CPU (including building more components)
 
 ### Credits
-Most of gates.py and gates_test.py are written by Mitchell Kwock @mtkwock. These two files are copied from his repository: https://github.com/mtkwock/ternary. The rest of the code are written by me. 
+Most of gates.py and gates_test.py are written by Mitchell Kwock @mtkwock. These two files are copied from his [repository](https://github.com/mtkwock/ternary). The rest of the code are written by me. 
