@@ -12,6 +12,7 @@ The basic gates implemented in the code are referenced off this webpage: [Dougla
 
 ### Component Implementation in python: Adder
 The implementation of the adder is very similar to Lab1 in class where we implemented an alu in verilog. Instead of using XOR to sum two bits in binary, in ternary a sum function is used (also defined in the Douglas W. Jones on gates link above). For the carryout, a consensus function is used. Because this is implemented in python, there is also two functions that convert decimal to ternary and vice versa. The code is in adder.py.
+
 ![Screenshot of Adder adding numbers in Ternary](https://github.com/xiaozhengxu/TernaryCompArch/blob/master/Adder%20screenshot.png)
 
 ### Component Implementation in python: Mux
